@@ -128,11 +128,6 @@ void DesktopWindowTreeHostPlatform::Close() {
 
   desktop_native_widget_aura_->content_window()->Hide();
 
-  // Hide while waiting for the close.
-  // Please note that it's better to call WindowTreeHost::Hide, which also calls
-  // PlatformWindow::Hide and Compositor::SetVisible(false).
-  Hide();
-
   waiting_for_close_now_ = true;
   base::ThreadTaskRunnerHandle::Get()->PostTask(
       FROM_HERE, base::BindOnce(&DesktopWindowTreeHostPlatform::CloseNow,
@@ -140,6 +135,10 @@ void DesktopWindowTreeHostPlatform::Close() {
 }
 
 void DesktopWindowTreeHostPlatform::CloseNow() {
+  // Please note that it's better to call WindowTreeHost::Hide, which also calls
+  // PlatformWindow::Hide and Compositor::SetVisible(false).
+  Hide();
+
   auto weak_ref = weak_factory_.GetWeakPtr();
   // Deleting the PlatformWindow may not result in OnClosed() being called, if
   // not behave as though it was.
