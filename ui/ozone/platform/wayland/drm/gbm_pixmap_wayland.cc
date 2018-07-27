@@ -70,11 +70,6 @@ bool GbmPixmapWayland::InitializeBuffer(gfx::Size size,
   }
 
   uint32_t fourcc_format = GetFourCCFormatFromBufferFormat(format);
-  if (!gbm_device_is_format_supported(connection_->gbm_device()->device(),
-                                      fourcc_format, flags)) {
-    LOG(FATAL) << "Not supported usage for this format";
-    return false;
-  }
 
   if (!CreateBo(fourcc_format, size, flags)) {
     LOG(FATAL) << "Cannot create bo";
