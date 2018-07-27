@@ -27,6 +27,7 @@ static_assert(XDG_SHELL_VERSION_CURRENT == 5, "Unsupported xdg-shell version");
 namespace ui {
 namespace {
 const uint32_t kMaxCompositorVersion = 4;
+const uint32_t kMaxLinuxDmabufVersion = 1;
 const uint32_t kMaxSeatVersion = 4;
 const uint32_t kMaxShmVersion = 1;
 const uint32_t kMaxXdgShellVersion = 1;
@@ -499,8 +500,8 @@ void WaylandConnection::Global(void* data,
     connection->data_device_manager_->set_connection(connection);
   } else if (!connection->zwp_linux_dmabuf_ &&
              (strcmp(interface, "zwp_linux_dmabuf_v1") == 0)) {
-    connection->zwp_linux_dmabuf_ =
-        wl::Bind<zwp_linux_dmabuf_v1>(registry, name, 2);
+    connection->zwp_linux_dmabuf_ = wl::Bind<zwp_linux_dmabuf_v1>(
+        registry, name, std::min(version, kMaxLinuxDmabufVersion));
     zwp_linux_dmabuf_v1_add_listener(connection->zwp_linux_dmabuf(),
                                      &dmabuf_listener, connection);
     // A roundtrip after binding guarantees that the client has received all
